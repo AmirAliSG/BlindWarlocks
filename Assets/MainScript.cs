@@ -56,6 +56,37 @@ public class Player
         GameObject.Destroy(show_selected_card_.gameObject);
         CheckCanReady();
     }
+    public void SelectDirectionShower(DirectionShowerHandler direction)
+    {
+        direction.selected = true;
+        if (direction.ifmagic_)
+        {
+            if (selected_magic_direction_ != null)
+                selected_magic_direction_.selected = false;
+            if (selected_magic_direction_ == direction)
+                selected_magic_direction_ = null;
+            else
+                selected_magic_direction_ = direction;
+        }
+        else
+        {
+            if (selected_move_direction_ != null)
+                selected_move_direction_.selected = false;
+            if (selected_move_direction_ == direction)
+                selected_move_direction_ = null;
+            else
+                selected_move_direction_ = direction;
+        }
+        CheckCanReady();
+    }
+}
+public class Tile
+{
+    public int x;
+    public int y;
+    public int z;
+    //HexHandler hex_;
+
 }
 
 public class Pair<T1, T2>
@@ -81,82 +112,24 @@ public class Pair<T1, T2>
     }
 }
 public class MainScript : MonoBehaviour {
-    
-    [UnityEngine.Serialization.FormerlySerializedAsAttribute("cards")]
-    
-    
-    public Player AmirAli;
+    //[UnityEngine.Serialization.FormerlySerializedAsAttribute("cards")]
+    public Player thisPlayer;
     public static MainScript instance_;
 
-    [MenuItem("fucker/Change #&b")]
-    static void hapalan()
-    {
-        int Canvas_Height = 502;
-        int ismagic = 1;
-        int borderdistance = Canvas_Height/20;
-        string a = Selection.activeGameObject.name;
-        //GameObject.Find("Canvas").GetComponent<RectTransform>.
-        int Radius = Canvas_Height/(2*4);
-        if (a[0] == 'M')
-            ismagic += 2;
-        RectTransform ActiveRectTransform = Selection.activeGameObject.GetComponent<RectTransform>();
-        ActiveRectTransform.anchorMax = new Vector2(0.115f,1f - (float)(Radius + borderdistance )* ismagic/Canvas_Height);
-        ActiveRectTransform.anchorMin = new Vector2(0.115f,1f - (float)(Radius + borderdistance) * ismagic/Canvas_Height);
-        //Selection.activeGameObject.transform.position += Vector3.forward * 10;
-        
-        int angel = ((int)a[a.Length - 2] - (int)'0') * 60;
-
-
-        Vector3 Direction = new Vector3(Mathf.Cos((angel - 90) * Mathf.PI / 180), Mathf.Sin((angel - 90) * Mathf.PI / 180), 0);
-        if (a[a.Length - 2] == '7')
-        {
-            Direction = new Vector3(0, 0, 0);
-            angel = 0;
-        }
-        else
-            Selection.activeGameObject.transform.rotation = Quaternion.Euler(0, 0, angel+180);
-        ActiveRectTransform.anchoredPosition = Radius * Direction;
-        
-    }
-    
-    private Canvas canvas;
-    
-    private List<Pair<CardData,CardVisualizer>> hand_;
-    
-    // Use this for initialization
     void Start() {
         instance_ = this;
-        canvas = FindObjectOfType<Canvas>();
-        AmirAli = new Player();
-        
+        thisPlayer = new Player();
+
     }
     public void SelectDirectionShower(DirectionShowerHandler direction)
     {
-        direction.selected = true;
-        if (direction.ifmagic_)
-        {
-            if (AmirAli.selected_magic_direction_ != null)
-                AmirAli.selected_magic_direction_.selected = false;
-            if (AmirAli.selected_magic_direction_ == direction)
-                AmirAli.selected_magic_direction_ = null;
-            else
-                AmirAli.selected_magic_direction_ = direction;
-        }
-        else
-        {
-            if (AmirAli.selected_move_direction_ != null)
-                AmirAli.selected_move_direction_.selected = false;
-            if (AmirAli.selected_move_direction_ == direction)
-                AmirAli.selected_move_direction_ = null;
-            else
-                AmirAli.selected_move_direction_ = direction;
-        }
-        AmirAli.CheckCanReady();
+        Debug.Log("WATISHAPPENING");
+        thisPlayer.SelectDirectionShower(direction);
         gameObject.GetComponent<UnityEngine.UI.Selectable>().Select();
     }
     public void SelectCardFromHand(CardData data, CardVisualizer card)
     {
-        AmirAli.SelectCard(data, card);
+        thisPlayer.SelectCard(data, card);
         if (data.IsDefault == false)
             CardDashboardHandler.instance_.Remove(data, card);
     }
@@ -164,6 +137,12 @@ public class MainScript : MonoBehaviour {
     {
         if (data.IsDefault == false)
             CardDashboardHandler.instance_.Draw(data);
-        AmirAli.UnselectCard();///this is required when only amirali have the not ishandmode_ shits
+        thisPlayer.UnselectCard();///this is required when only thisPlayer have the not ishandmode_ shits
     }
+    
 }
+//gamescale fullscreen
+//network
+//gameboard
+//rules
+//other scene:menu, option

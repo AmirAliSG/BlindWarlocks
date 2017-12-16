@@ -41,6 +41,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db2c7dca8c601f24f91a1c689ebef66d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 1743951044816652, guid: 8804b60fbae34794f86987e2f9a9bd55, type: 2}
   mouseover_event_:
     m_PersistentCalls:
       m_Calls: []
@@ -126,15 +127,15 @@ RectTransform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1340307419779898}
-  m_LocalRotation: {x: -0, y: -0, z: 0.8660254, w: -0.50000006}
+  m_LocalRotation: {x: -0, y: -0, z: -1, w: 0.000000011924881}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
-  m_AnchorMin: {x: 0.12, y: 0.43824703}
-  m_AnchorMax: {x: 0.12, y: 0.43824703}
-  m_AnchoredPosition: {x: 59.755753, y: -34.5}
+  m_AnchorMin: {x: 0.115, y: 0.48007968}
+  m_AnchorMax: {x: 0.115, y: 0.48007968}
+  m_AnchoredPosition: {x: 0.0000007393426, y: -62}
   m_SizeDelta: {x: 50, y: 49}
   m_Pivot: {x: 0.5, y: 0.5}
