@@ -43,9 +43,8 @@ public class CardVisualizer : MonoBehaviour, IPointerEnterHandler, IPointerClick
         transform.localScale = Vector3.one;
     }
     public void OnPointerEnter(PointerEventData eventData)
-    {
-        Debug.Log("HELL");
-        /*if (ishandmode_)
+    {   
+        if (ishandmode_)
         {
             firstplace_ = transform.position;
             firstrotate_ = transform.rotation;
@@ -54,13 +53,11 @@ public class CardVisualizer : MonoBehaviour, IPointerEnterHandler, IPointerClick
             transform.rotation = new Quaternion(0, 0, 0, 0);
             SetBackInvisChild();
             ismoving_ = true;
-        }*/
+        }
+        //else
     }
     public bool Move(Vector3 destination)
     {
-
-        //float distance = speed* Time.deltaTime 
-
         if (Vector3.Distance(transform.position, destination) < (float)speed_ * Time.deltaTime)
         {
             transform.position = destination;
@@ -83,7 +80,6 @@ public class CardVisualizer : MonoBehaviour, IPointerEnterHandler, IPointerClick
     }
     public void OnPointerClick(PointerEventData eventData)
     {
-        Debug.Log("WAT");
         //Debug.Log(MainScript.HexPositionu(new Vector3(eventData.position.x, eventData.position.y)).ToString() + "  " + MainScript.HexPositionv(new Vector3(eventData.position.x, eventData.position.y)).ToString());
         if (ishandmode_)
         {

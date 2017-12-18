@@ -7,21 +7,35 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class DirectionShowerHandler : MonoBehaviour, IPointerClickHandler {
-    public GameObject canvas;
-    public void MakeItRight()
+    const float Radius_Proportion = 8f;
+    const int border_Proportion = 20;
+    public static void AnchorRight(GameObject gameObject)
     {
-        float Canvas_Height = canvas.GetComponent<RectTransform>().rect.height;
-        //Debug.Log(Canvas_Height.ToString());
+        float Canvas_Height = gameObject.GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.height;
+        float Canvas_Width = gameObject.GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.width;
         int ismagic = 1;
-        float borderdistance = Canvas_Height / 20;
+        if (gameObject.name[0] == 'M')
+            ismagic += 2;
+        float Radius = Canvas_Height / Radius_Proportion;
+        float borderdistance = Canvas_Height / border_Proportion;
+        RectTransform ActiveRectTransform = gameObject.GetComponent<RectTransform>();
+        ActiveRectTransform.anchorMax = new Vector2(Radius * 3 / (2 * Canvas_Width), 1f - (float)(Radius + borderdistance) * ismagic / Canvas_Height);
+        ActiveRectTransform.anchorMin = new Vector2(Radius * 3 / (2 * Canvas_Width), 1f - (float)(Radius + borderdistance) * ismagic / Canvas_Height);
+    }
+    public static void MakeItRight(GameObject gameObject)
+    {
+
+        float Canvas_Height = gameObject.GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.height;
+        float Canvas_Width = gameObject.GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.width;
+        RectTransform ActiveRectTransform = gameObject.GetComponent<RectTransform>();
+        int ismagic = 1;
+        float borderdistance = Canvas_Height / border_Proportion;
         string a = gameObject.name;
         //GameObject.Find("Canvas").GetComponent<RectTransform>.
-        float Radius = Canvas_Height / (2 * 4);
+        float Radius = Canvas_Height / Radius_Proportion;
         if (a[0] == 'M')
             ismagic += 2;
-        RectTransform ActiveRectTransform = gameObject.GetComponent<RectTransform>();
-        ActiveRectTransform.anchorMax = new Vector2(Radius*3 / (2*canvas.GetComponent<RectTransform>().rect.width), 1f - (float)(Radius + borderdistance) * ismagic / Canvas_Height);
-        ActiveRectTransform.anchorMin = new Vector2(Radius * 3 / (2 * canvas.GetComponent<RectTransform>().rect.width), 1f - (float)(Radius + borderdistance) * ismagic / Canvas_Height);
+
         //Selection.activeGameObject.transform.position += Vector3.forward * 10;
 
         float angel = ((int)a[a.Length - 2] - (int)'0') * 60;
@@ -37,19 +51,30 @@ public class DirectionShowerHandler : MonoBehaviour, IPointerClickHandler {
             gameObject.transform.rotation = Quaternion.Euler(0, 0, angel + 180);
         ActiveRectTransform.anchoredPosition = Radius * Direction;
     }
+    static void allmakeitright(GameObject G)
+    {
+        AnchorRight(G);
+        MakeItRight(G);
+    }
     [MenuItem("fucker/Change #&b")]
     static void hapalan()
     {
-        Selection.activeGameObject.GetComponent<DirectionShowerHandler>().MakeItRight();
+        allmakeitright(Selection.activeGameObject);
+        //Selection.activeGameObject.GetComponent<DirectionShowerHandler>().MakeItRight();
     }
-    [MenuItem("fucker/allhapalan ")]
+    [MenuItem("fucker/justhapalan")]
+    static void justhapalan()
+    {
+        MakeItRight(Selection.activeGameObject);
+    }
+    /*[MenuItem("fucker/allhapalan ")]
     static void allhapalan()
     {
         
         DirectionShowerHandler[] DSH = GameObject.FindObjectsOfType<DirectionShowerHandler>();
-        for (int i = 0; i < DSH.Length; ++i)
+        /*for (int i = 0; i < DSH.Length; ++i)
             DSH[i].MakeItRight();
-    }   
+    }   */
     public UnityEngine.Events.UnityEvent mouseover_event_;
     public Image image_;
     public int direction_;
@@ -71,8 +96,7 @@ public class DirectionShowerHandler : MonoBehaviour, IPointerClickHandler {
         ifmagic_ = false;
         if (gameObject.name[0] == 'M')
             ifmagic_ = true;
-        canvas = GetComponentInParent<Canvas>().gameObject;
-        MakeItRight();
+        allmakeitright(gameObject);
     }
 	
 	// Update is called once per frame
