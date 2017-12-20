@@ -18,7 +18,9 @@ public class CardVisualizer : MonoBehaviour, IPointerEnterHandler, IPointerClick
     private CardData data_;
     private Vector3 firstplace_,childfirstplace_;
     private Quaternion firstrotate_,childfirstrotation_;
-    public float scale_target_, upward_distance_, speed_;
+    [SerializeField]
+    public float scale_target_, speed_;
+    private float upward_distance_;
     public void Visualize(CardData data,bool ishandmode)
     {
         data_ = data;
@@ -58,7 +60,7 @@ public class CardVisualizer : MonoBehaviour, IPointerEnterHandler, IPointerClick
     }
     public bool Move(Vector3 destination)
     {
-        if (Vector3.Distance(transform.position, destination) < (float)speed_ * Time.deltaTime)
+        if (Vector3.Distance(transform.position, destination) < speed_ * Time.deltaTime)
         {
             transform.position = destination;
             SetBackInvisChild();

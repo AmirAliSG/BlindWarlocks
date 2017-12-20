@@ -114,7 +114,7 @@ public class GameBoardHandler : MonoBehaviour {
     public GameObject InputField;
     private bool IsSaving_;
     private bool IsLoading_;
-    public int MAXPLAYERS = 6;
+    
     //public 
     private Dictionary<PairHex, HexHandler> Tiles_;
     public GameObject Wall_;
@@ -160,7 +160,7 @@ public class GameBoardHandler : MonoBehaviour {
 
     public void writetofile(string txt)
     {
-        string path = "Assets/maps.txt";
+        string path = "maps.txt";
         System.IO.TextWriter W = new System.IO.StreamWriter(path, true);
         W.Write(txt);
         W.Close();
@@ -170,7 +170,7 @@ public class GameBoardHandler : MonoBehaviour {
         writetofile("\n"+name+".");
         foreach (PairHex I in Tiles_.Keys)
         {
-            writetofile(Tiles_[I].player_.ToString() + I.ToString() + ".");
+            writetofile(Tiles_[I].localplayer_.ToString() + I.ToString() + ".");
         }
         writetofile(mapstring_);
     }
@@ -211,7 +211,7 @@ public class GameBoardHandler : MonoBehaviour {
     {
         char[] B = new char[1];
         B[0] = '.';
-        string path = "Assets/maps.txt";
+        string path = "maps.txt";
         System.IO.StreamReader R = new System.IO.StreamReader(path);
         string[] Goospand;
 
@@ -299,9 +299,9 @@ public class GameBoardHandler : MonoBehaviour {
         clicked_hex_ = G;
     }
     
-    public bool Available(PairHex P,int playernumber)
+    public bool Available(PairHex P)
     {
-        if(Tiles_.ContainsKey(P) && (Tiles_[P].player_ == 0 || playernumber == Tiles_[P].player_))
+        if(Tiles_.ContainsKey(P) && (Tiles_[P].localplayer_ <= 1))
             return true;
         return false;
     }
@@ -338,7 +338,7 @@ public class GameBoardHandler : MonoBehaviour {
         Wall.GetComponent<SpriteRenderer>().color = Color.black;
         Object.Destroy(Wall.GetComponent<HexHandler>());*/
         mapstring_ = "";
-        for(int i = 1; i < MAXPLAYERS + 1; i++)
+        for(int i = 1; i < Player.MAXPLAYERS + 1; i++)
         {
             mapstring_ = mapstring_  + i.ToString() + "::";
         }
@@ -357,7 +357,7 @@ public class GameBoardHandler : MonoBehaviour {
         else
         {
             Load(MapName);
-            transform.position = new Vector3(-3.5f, 0, 0);
+            transform.position = new Vector3(2.1f, 0, 0);
         }
         //HexClicked(CreateTile(0, 0));
         /* GameObject A = GameObject.Instantiate(Hexagon_, transform);

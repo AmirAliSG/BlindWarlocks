@@ -1,62 +1,72 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor;
+//using UnityEditor;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class DirectionShowerHandler : MonoBehaviour, IPointerClickHandler {
-    const float Radius_Proportion = 8f;
-    const int border_Proportion = 20;
-    public static void AnchorRight(GameObject gameObject)
+    const float Radius_Proportion = 12f;
+    const int border_Proportion = 30;
+    const float Bottom_offset = 150;
+    public static void AnchorRight(GameObject gameObject,int direction,bool ismag)
     {
         float Canvas_Height = gameObject.GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.height;
         float Canvas_Width = gameObject.GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.width;
         int ismagic = 1;
-        if (gameObject.name[0] == 'M')
+        if (ismag)
             ismagic += 2;
         float Radius = Canvas_Height / Radius_Proportion;
         float borderdistance = Canvas_Height / border_Proportion;
         RectTransform ActiveRectTransform = gameObject.GetComponent<RectTransform>();
-        ActiveRectTransform.anchorMax = new Vector2(Radius * 3 / (2 * Canvas_Width), 1f - (float)(Radius + borderdistance) * ismagic / Canvas_Height);
-        ActiveRectTransform.anchorMin = new Vector2(Radius * 3 / (2 * Canvas_Width), 1f - (float)(Radius + borderdistance) * ismagic / Canvas_Height);
+        ActiveRectTransform.anchorMax = new Vector2(1f - Radius * 3 / (2 * Canvas_Width), ( Bottom_offset + ((float)(Radius + borderdistance) * ismagic)) / Canvas_Height);
+        ActiveRectTransform.anchorMin = new Vector2(1f - Radius * 3 / (2 * Canvas_Width), ( Bottom_offset + ((float)(Radius + borderdistance) * ismagic)) / Canvas_Height);
     }
-    public static void MakeItRight(GameObject gameObject)
+    public static void MakeItRight(GameObject gameObject, int direction, bool ismag)
     {
 
         float Canvas_Height = gameObject.GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.height;
         float Canvas_Width = gameObject.GetComponentInParent<Canvas>().GetComponent<RectTransform>().rect.width;
         RectTransform ActiveRectTransform = gameObject.GetComponent<RectTransform>();
         int ismagic = 1;
+        if (ismag)
+            ismagic += 2;
         float borderdistance = Canvas_Height / border_Proportion;
-        string a = gameObject.name;
         //GameObject.Find("Canvas").GetComponent<RectTransform>.
         float Radius = Canvas_Height / Radius_Proportion;
-        if (a[0] == 'M')
-            ismagic += 2;
+
 
         //Selection.activeGameObject.transform.position += Vector3.forward * 10;
 
-        float angel = ((int)a[a.Length - 2] - (int)'0') * 60;
+        float angel = direction * 60;
 
 
         Vector3 Direction = new Vector3(Mathf.Cos((angel - 90) * Mathf.PI / 180), Mathf.Sin((angel - 90) * Mathf.PI / 180), 0);
-        if (a[a.Length - 2] == '7')
+        if (direction == 7)
         {
             Direction = Vector3.zero;
-            angel = 0;
+            angel = -180;
+            GameObject.DestroyImmediate(gameObject.GetComponent<Image>());
+            Text Javad = gameObject.AddComponent<Text>();
+            gameObject.GetComponent<Selectable>().targetGraphic = Javad;
+            Javad.text = "STOP";
+            Javad.fontStyle = FontStyle.Bold;
+            
+            Javad.alignment = TextAnchor.MiddleCenter;
+            Javad.font = Font.CreateDynamicFontFromOSFont("Arial", 14);
+            Javad.resizeTextForBestFit = true;
+            Javad.color = Color.Lerp(Color.red, Color.yellow, 0.6f);
         }
-        else
-            gameObject.transform.rotation = Quaternion.Euler(0, 0, angel + 180);
+        gameObject.transform.rotation = Quaternion.Euler(0, 0, angel + 180);
         ActiveRectTransform.anchoredPosition = Radius * Direction;
     }
-    static void allmakeitright(GameObject G)
+    static void allmakeitright(GameObject G, int direction, bool ismagic)
     {
-        AnchorRight(G);
-        MakeItRight(G);
+        AnchorRight(G, direction, ismagic);
+        MakeItRight(G, direction, ismagic);
     }
-    [MenuItem("fucker/Change #&b")]
+    /*[MenuItem("fucker/Change #&b")]
     static void hapalan()
     {
         allmakeitright(Selection.activeGameObject);
@@ -90,13 +100,19 @@ public class DirectionShowerHandler : MonoBehaviour, IPointerClickHandler {
 
 
     // Use this for initialization
-    void Start () {
+    public void Set(int direction) {
         image_ = gameObject.GetComponent<Image>();
-        direction_ = (int)gameObject.name[gameObject.name.Length - 2]-'0';
-        ifmagic_ = false;
-        if (gameObject.name[0] == 'M')
+        if(direction > 7)
+        {
             ifmagic_ = true;
-        allmakeitright(gameObject);
+            direction_ = direction - 7;
+        }
+        else
+        {
+            ifmagic_ = false;
+            direction_ = direction;
+        }
+        allmakeitright(gameObject, direction_, ifmagic_);
     }
 	
 	// Update is called once per frame

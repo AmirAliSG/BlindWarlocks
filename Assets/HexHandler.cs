@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 
 public class HexHandler : MonoBehaviour {
-    public int x_, y_,player_;
+    public int x_, y_,localplayer_;
     bool selected_;
     public static Color LightBlue;
     Color Default_;
@@ -79,7 +79,7 @@ public class HexHandler : MonoBehaviour {
         x_ = x;
         y_ = y;
         gameObject.transform.position = pos;
-        player_ = player;
+        localplayer_ = player;
         if (player == 0)
             Default_ = Color.white;
         else
