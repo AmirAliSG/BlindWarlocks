@@ -1,48 +1,74 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+[System.Serializable]
+public class Direction
+{
+    public int direction;
+
+    private int DirectionTranslate()
+    {
+        return ((2 * (int)(direction / 4)) - 1) * (1 - ((direction % 3) % 2));
+    }
+    public PairHex PairDirection()
+    {
+        return new PairHex(XPairDirection(), YPairDirection());
+    }
+    public int XPairDirection()
+    {
+        return (this + 4).DirectionTranslate();
+    }
+    public int YPairDirection()
+    {
+        return DirectionTranslate();
+    }
+
+    public static Direction operator +(int n, Direction D)
+    {
+        if (n > 0)
+            return new Direction(1 + ((D.direction + n - 1) % 6));
+        return new Direction(1 + ((D.direction + 60005) % 6));///?
+    }
+    public static Direction operator +(Direction D, int n)
+    {
+        return n + D;
+    }
+    public static Direction operator +(Direction N, Direction D)
+    {
+        return N.direction + D;
+    }
+    
+    public Direction(int d)
+    {
+        direction = d;// ((d-1)%6)+1;
+    }
+    /*public Direction()
+    {
+        direction = 0;
+    }*/
+
+    public override string ToString()
+    {
+        return direction.ToString();
+    }
+    public override int GetHashCode()
+    {
+        return direction.GetHashCode();
+    }
+    public override bool Equals(object obj)
+    {
+        if (obj.GetType() != this.GetType())
+            return false;
+        if (obj.ToString() == ToString())
+            return true;
+        return false;
+    }
+}
 public class PairHex
 {
     public int x;
     public int y;
-    static public int DirectionTranslate(int direction)
-    {
-        return ((2 * (int)(direction / 4)) - 1) * (1 - ((direction % 3) % 2));
-    }
-    public int NextX(int direction)
-    {
-        return x + DirectionTranslate(((direction + 3) % 6) + 1);
-    }
-    public int NextY(int direction)
-    {
-        return y + DirectionTranslate(direction);
-    }
-    public PairHex Next(int direction)
-    {
-        return new PairHex(NextX(direction), NextY(direction));
-        //1:x-z:x
-        //2:x-y
-        //3:z-y:-y
-        //4:z-x:-x
-        //5:y-x
-        //6:y-z:y
-        //x: + + 0 - - 0
-        //y: 0 - - 0 + +
-        //a: 1 2 3 4 5 6
-    }
-    public Vector3 PositionOf()
-    {
-        Vector3 XDirection = new Vector3(Mathf.Cos(330 * Mathf.PI / 180), Mathf.Sin(330 * Mathf.PI / 180));
-        Vector3 YDirection = Vector3.down;
-        //Debug.Log(((XDirection * x * (hexsize + border)) + (YDirection * y * (hexsize + border))).ToString());
-        float Dis = GameBoardHandler.HexSize_ + GameBoardHandler.border_;
-        return (XDirection * x * Dis) + (YDirection * y * Dis);
-    }
-    public PairHex(int X, int Y)
-    {
-        x = X;
-        y = Y;
-    }
+
     static public int Int(string str)
     {
         int s = 0;
@@ -54,9 +80,52 @@ public class PairHex
             s *= 10;
             s += ((int)str[i] - '0');
         }
-        if(str[0] == '-')
-            return s*-1;
+        if (str[0] == '-')
+            return s * -1;
         return s;
+    }
+
+
+    public PairHex Next(Direction direction)
+    {
+        return direction.PairDirection() + this;
+        //1:x-z:x
+        //2:x-y
+        //3:z-y:-y
+        //4:z-x:-x
+        //5:y-x
+        //6:y-z:y
+        //x: + + 0 - - 0
+        //y: 0 - - 0 + +
+        //a: 1 2 3 4 5 6
+    }
+    public PairHex Rotate(Direction direction)
+    {
+        PairHex P = new PairHex(0, 0);
+        if (x > 0)
+            P += x * (direction).PairDirection();
+        else
+            P += x * (direction + 3).PairDirection();
+        if (y > 0)
+            P += y * (direction + 5).PairDirection();
+        else
+            P += y * (direction + 2).PairDirection();
+        return P;
+    }
+
+    public Vector3 PositionOf()
+    {
+        Vector3 XDirection = new Vector3(Mathf.Cos(330 * Mathf.PI / 180), Mathf.Sin(330 * Mathf.PI / 180));
+        Vector3 YDirection = Vector3.down;
+        //Debug.Log(((XDirection * x * (hexsize + border)) + (YDirection * y * (hexsize + border))).ToString());
+        float Dis = GameBoardHandler.HexSize_ + GameBoardHandler.border_;
+        return (XDirection * x * Dis) + (YDirection * y * Dis);//should be set according to gameboard
+    }
+
+    public PairHex(int X, int Y)
+    {
+        x = X;
+        y = Y;
     }
     public PairHex(string A)
     {
@@ -67,6 +136,7 @@ public class PairHex
         x = Int(A.Split(B)[1]);
         y = Int(A.Split(B)[2]);
     }
+
     public override string ToString()
     {
         return "(" + x.ToString() + "," + y.ToString() + ")";
@@ -83,7 +153,14 @@ public class PairHex
             return false;
         return true;
     }
-    
+    public static PairHex operator *(int n,PairHex P)
+    {
+        return new PairHex(P.x * n, P.y * n);
+    }
+    public static PairHex operator +(PairHex P,PairHex H)
+    {
+        return new PairHex(P.x + H.x, P.y + H.y);
+    }
     public override bool Equals(object obj)
     {
         //       
@@ -101,9 +178,6 @@ public class PairHex
             return true;
         return false;
     }
-
-    // override object.GetHashCode
-
     public override int GetHashCode()
     {
         return x * 100000 + y;
@@ -269,11 +343,11 @@ public class GameBoardHandler : MonoBehaviour {
         mapstring_ = mapstring_.Substring(0, LENGTH) + P.ToString() + "&" + mapstring_.Substring(PLACE);
 
     }
-    public void ButtonClicked(int direction)
+    public void ButtonClicked(Direction direction)
     {
         if (clicked_hex_ != null)
         {
-            PairHex P = new PairHex(clicked_hex_.x_, clicked_hex_.y_).Next(direction);
+            PairHex P = clicked_hex_.Pair().Next(direction);
             if (Tiles_.ContainsKey(P))
                 DestroyTile(P);
             else
@@ -305,11 +379,15 @@ public class GameBoardHandler : MonoBehaviour {
             return true;
         return false;
     }
-    public GameObject Get(int x, int y)
+    public HexHandler Get(PairHex P)
     {
-        if (Tiles_.ContainsKey(new PairHex(x,y)))
-            return Tiles_[new PairHex(x,y)].gameObject;
-        return Wall_;
+        if (Tiles_.ContainsKey(P))
+            return Tiles_[P];
+        return null;
+    }
+    public HexHandler Get(int x, int y)
+    {
+        return Get(new PairHex(x, y));
     }
     //private ?
 
@@ -328,6 +406,8 @@ public class GameBoardHandler : MonoBehaviour {
         HexHandler H = GameObject.Instantiate(Hexagon_, transform).GetComponent<HexHandler>();
         H.Set(P.x, P.y,player_number_, P.PositionOf());
         Tiles_.Add(P, H);
+        if (P == new PairHex(2, 0))
+            Debug.Log(P.PositionOf().ToString());
         return H;
     }
     // Use this for initialization

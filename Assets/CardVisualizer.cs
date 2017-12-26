@@ -4,7 +4,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
-
+[System.Serializable]
+public class CardData
+{
+    public Sprite Img;
+    public string name;
+    public int level;
+    public bool IsDefault;
+    public bool IsActive;
+    public bool IsSuicidal;
+    public PairHex[] Relative_Kill_zones;
+}
 public class CardVisualizer : MonoBehaviour, IPointerEnterHandler, IPointerClickHandler, IPointerExitHandler
 {
     
@@ -45,7 +55,7 @@ public class CardVisualizer : MonoBehaviour, IPointerEnterHandler, IPointerClick
         transform.localScale = Vector3.one;
     }
     public void OnPointerEnter(PointerEventData eventData)
-    {   
+    {
         if (ishandmode_)
         {
             firstplace_ = transform.position;
@@ -56,7 +66,15 @@ public class CardVisualizer : MonoBehaviour, IPointerEnterHandler, IPointerClick
             SetBackInvisChild();
             ismoving_ = true;
         }
-        //else
+        else
+        {
+            data_.Relative_Kill_zones = new PairHex[4];
+            data_.Relative_Kill_zones[0] = new PairHex(1, 0);
+            data_.Relative_Kill_zones[1] = new PairHex(0, 1);
+            data_.Relative_Kill_zones[2] = new PairHex(2, 0);
+            data_.Relative_Kill_zones[3] = new PairHex(0, 2);
+            GameObject.Find("Manager").GetComponent<MainScript>().MouseOnCardInPanel(data_, name);
+        }
     }
     public bool Move(Vector3 destination)
     {
@@ -103,5 +121,7 @@ public class CardVisualizer : MonoBehaviour, IPointerEnterHandler, IPointerClick
             SetBackTransform();
             SetBackInvisChild();
         }
+        else
+            GameObject.Find("Manager").GetComponent<MainScript>().MouseExitFromCardInPanel(data_, name);
     }
 }

@@ -87,12 +87,13 @@ public class DirectionShowerHandler : MonoBehaviour, IPointerClickHandler {
     }   */
     public UnityEngine.Events.UnityEvent mouseover_event_;
     public Image image_;
-    public int direction_;
+    public Direction direction_;
     public bool ifmagic_;
     public UnityEngine.UI.Selectable K;
     public bool selected;
     public void OnPointerClick(PointerEventData eventData)
     {
+        Debug.Log(direction_.direction.ToString());
         GetComponentInParent<MainScript>().SelectDirectionShower(this);
         
     }
@@ -105,14 +106,14 @@ public class DirectionShowerHandler : MonoBehaviour, IPointerClickHandler {
         if(direction > 7)
         {
             ifmagic_ = true;
-            direction_ = direction - 7;
+            direction_ = new Direction(direction - 7);
         }
         else
         {
             ifmagic_ = false;
-            direction_ = direction;
+            direction_ = new Direction(direction);
         }
-        allmakeitright(gameObject, direction_, ifmagic_);
+        allmakeitright(gameObject, direction_.direction, ifmagic_);//.direction ?
     }
 	
 	// Update is called once per frame
